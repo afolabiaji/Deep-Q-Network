@@ -4,6 +4,12 @@ from collections import deque
 
 from model import QNetwork
 
+import torch
+import gym 
+
+# Initialise the Gym
+env = gym.make("ALE/Breakout-v5")
+
 #Initialize replay memory D to capacity N
 replay_memory = deque(maxlen=MEMORY_SIZE)
 
@@ -22,16 +28,26 @@ with torch.no_grad():
 render = lambda: plt.imshow(env.render(mode="rgb_array"))
 observation, info = env.reset(seed=42, return_info=True)
 
+done = False
+
 for episode in range(20):
     for time_step in range(MAX_TIME_STEPS):
-        render()
-        if time_step < NOOP_MAX:
-            action = 0
-            observation, reward, done, info = env.step(action)
-            continue
-        elif epsilon > np.random():
-            action = Q_NETWORK(observation)
-        else:
-            action = env.action_space.sample()
+        if not done:
+            render()
+            if time_step < NOOP_MAX:
+                action = 0
+                observation, reward, done, info = env.step(action)
+                continue
+            elif epsilon > np.random():
+                #do preprocessing steps here.
+                #we want to take 4 frames and resize them then stack them
+                #then go from numpy to torch
+                #then pass into action value function
+                action = torch.argmax(action_value_function(observation)).item()
+            else:
+                action = env.action_space.sample()
 
-        observation, reward, done, info = env.step(action)
+            observation, reward, done, info = env.step(action)
+            print(observation, reward, done, info)
+        else:
+            break
