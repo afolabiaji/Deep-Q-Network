@@ -19,8 +19,8 @@ class QNetwork(nn.Module):
             nn.Flatten(),
             nn.Linear(3136, 512),
             nn.ReLU(),
-            nn.Linear(512,4),
-            nn.Softmax()
+            nn.Linear(512, 4),
+            nn.Softmax(),
         )
 
     def forward(self, x):
@@ -31,6 +31,7 @@ class QNetwork(nn.Module):
 def bellman_loss():
     pass
 
+
 def my_loss(output, target):
-    loss = torch.mean((output - target)**2)
+    loss = torch.mean((output - target) ** 2)
     return loss

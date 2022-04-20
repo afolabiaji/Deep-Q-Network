@@ -11,12 +11,14 @@ https://gym.openai.com (these are outdated).
 
 A server doesn't have a screen so 
 
+    ```
     env.render()
+    ```
 
 won't work. You must use:
-
+```
     render = lambda: plt.imshow(env.render(mode="rgb_array"))
-
+```
 to convert to numpy array.
 
 ## Project Structure
