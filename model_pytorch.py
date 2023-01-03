@@ -19,7 +19,7 @@ class QNetwork(nn.Module):
             nn.Flatten(),
             nn.Linear(3136, 512),
             nn.ReLU(),
-            nn.Linear(512,4)
+            nn.Linear(512,4),
             nn.Softmax()
         )
 

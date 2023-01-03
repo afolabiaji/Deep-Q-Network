@@ -17,13 +17,17 @@ from gym import wrappers
 from hyperparameters import *
 from model import QNetwork
 from preprocessing import preprocess_frames, map_and_stack_frames
+from torch.utils.tensorboard import SummaryWriter
+
+#create writer for tensorboard
+writer = SummaryWriter()
 
 # get gpu if gpu exists
 device = "cuda" if torch.cuda.is_available() else "cpu"
 print(f"Using {device} device")
 
 # Initialise the Gym
-env = gym.make("ALE/Breakout-v5")
+env = gym.make("ALE/Breakout-v5", render_mode='human')
 env = wrappers.Monitor(env, "./Breakout-v5", force=True)
 # Initialize replay memory D to capacity N
 replay_memory = deque(maxlen=MEMORY_SIZE)
@@ -77,7 +81,7 @@ for episode in range(10000):
     for time_step in range(1000000):
         if not done:
             # render the environment
-            env.render()
+            # env.render()
             #start the game by firing
             if time_step == 0:
                 action = 1
@@ -192,8 +196,9 @@ for episode in range(10000):
                 print(f"Training Loss: {output}.")
                 output.backward()
                 optimizer.step()
+                writer.add_scalar('Loss/train', output, time_step)
 
-                if total_steps % TARGET_NETWORK_UPDATE_FREQ:
+                if (total_steps % TARGET_NETWORK_UPDATE_FREQ) == 0:
                     # set model params to be same as previous model
                     with torch.no_grad():
                         target_function.network = action_value_function.network
@@ -202,6 +207,7 @@ for episode in range(10000):
                     epsilon = epsilon - DECAY_RATE
 
             print(f"Step complete. Step: {time_step}, Episode: {episode}, Total Reward: {total_reward}")
+            
             total_steps += 1
         else:
             video.release()
