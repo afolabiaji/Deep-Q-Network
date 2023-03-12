@@ -26,12 +26,3 @@ class QNetwork(nn.Module):
     def forward(self, x):
         outputs = self.network(x)
         return outputs
-
-
-def bellman_loss():
-    pass
-
-
-def my_loss(output, target):
-    loss = torch.mean((output - target) ** 2)
-    return loss
